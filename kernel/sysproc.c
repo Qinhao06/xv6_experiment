@@ -6,6 +6,7 @@
 #include "memlayout.h"
 #include "spinlock.h"
 #include "proc.h"
+#include "sysinfo.h"
 
 uint64
 sys_exit(void)
@@ -94,4 +95,41 @@ sys_uptime(void)
   xticks = ticks;
   release(&tickslock);
   return xticks;
+}
+
+//实现系统调用trace，通过给当前进程增加mask值实现
+uint64 
+sys_trace(void){ 
+                
+  int mask;
+  if(argint(0, &mask) < 0){
+    return -1;
+  }
+  struct proc *p = myproc();
+  p->mask = mask;
+  return 0;
+
+}
+
+//实现系统调用sysinfo,通过三个函数和一个结构体实现。
+//内核数据写出通过copyout函数
+uint64
+sys_sysinfo(void){;
+  
+  uint64 addr;
+  struct sysinfo info;
+  struct proc *p = myproc();
+
+  if(argaddr(0, &addr) < 0){
+    return -1;
+  }
+  
+  info.freemem = cal_mem();
+  info.freefd = cal_ofile();
+  info.nproc = cal_process();
+
+  if(copyout(p->pagetable, addr, (char*)&info, sizeof(info)) < 0){
+    return -1 ;
+  }
+  return 0;
 }

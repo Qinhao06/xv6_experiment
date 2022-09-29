@@ -21,6 +21,7 @@ static void freeproc(struct proc *p);
 
 extern char trampoline[]; // trampoline.S
 
+
 // initialize the proc table at boot time.
 void
 procinit(void)
@@ -276,6 +277,8 @@ fork(void)
   np->sz = p->sz;
 
   np->parent = p;
+
+  np->mask = p->mask;
 
   // copy saved user registers.
   *(np->trapframe) = *(p->trapframe);
@@ -692,4 +695,31 @@ procdump(void)
     printf("%d %s %s", p->pid, state, p->name);
     printf("\n");
   }
+}
+
+//计算处于unused的进程数量
+uint64
+cal_process(void){
+  uint64 count = 0 ;
+  for(int i = 0; i < NPROC; i++){
+    if(proc[i].state == UNUSED){
+      count++;
+    }
+  }
+  return count;
+}
+
+// 计算文件符数量
+uint64  
+cal_ofile(void){
+  uint64 count = 0;
+  for(int i = 0; i < NPROC; i++){
+    for(int j =0; j < NOFILE; j++){
+      if(proc[i].ofile[j]){
+        count++;
+      }
+      
+    }
+  }
+  return count;
 }
