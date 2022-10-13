@@ -1,6 +1,19 @@
 {
     "C_Cpp.errorSquiggles": "Disabled",
     "files.associations": {
-        "syscall.h": "c"
+        "syscall.h": "c",
+        "climits": "c",
+        "cmath": "c",
+        "compare": "c",
+        "concepts": "c",
+        "cstdarg": "c",
+        "cstdio": "c",
+        "cstdlib": "c",
+        "type_traits": "c",
+        "limits": "c",
+        "new": "c",
+        "*.tcc": "c",
+        "cstdint": "c",
+        "typeinfo": "c"
     }
 }

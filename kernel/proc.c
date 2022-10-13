@@ -712,14 +712,15 @@ cal_process(void){
 // 计算文件符数量
 uint64  
 cal_ofile(void){
-  uint64 count = 0;
-  for(int i = 0; i < NPROC; i++){
-    for(int j =0; j < NOFILE; j++){
-      if(proc[i].ofile[j]){
-        count++;
-      }
-      
+  int count = 0;
+  struct proc *p;
+  p = myproc();
+  acquire(&p->lock);
+  for(int i =0; i < NOFILE;i++){
+    if(p->ofile[i]){
+      count++;
     }
   }
-  return count;
+  release(&p->lock);
+  return NOFILE -  count;
 }
