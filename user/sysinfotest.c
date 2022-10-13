@@ -108,7 +108,7 @@ void testproc() {
   if(pid == 0){
     sinfo(&info);
     if(info.nproc != nproc-1) {
-      printf("sysinfotest: FAIL nproc is %d instead of %d\n", info.nproc, nproc+1);
+      printf("sysinfotest: FAIL nproc is %d instead of %d\n", info.nproc, nproc-1);
       exit(1);
     }
     exit(0);
@@ -139,14 +139,14 @@ void testfd(){
   }
   sinfo(&info);
   if(info.freefd != nfd - 11) {
-    printf("sysinfotest: FAIL freefd is %d instead of %d\n", info.freefd, nfd - 11);
+    printf("sysinfotest: FAIL freefd is %d instead of %d\n", info.freefd, nfd-11);
     exit(1);
   }
 
   close(fd);
   sinfo(&info);
   if(info.freefd != nfd - 10) {
-    printf("sysinfotest: FAIL freefd is %d instead of %d\n", info.freefd, nfd - 10);
+    printf("sysinfotest: FAIL freefd is %d instead of %d\n", info.freefd, nfd-10);
     exit(1);
   }
 }
