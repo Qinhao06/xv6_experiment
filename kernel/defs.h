@@ -8,6 +8,7 @@ struct spinlock;
 struct sleeplock;
 struct stat;
 struct superblock;
+struct kmem;
 #ifdef LAB_NET
 struct mbuf;
 struct sock;
@@ -64,8 +65,8 @@ void            ramdiskintr(void);
 void            ramdiskrw(struct buf*);
 
 // kalloc.c
-void*           kalloc(void);
-void            kfree(void *);
+void*           kalloc();
+void            kfree(void*);
 void            kinit(void);
 
 // log.c
