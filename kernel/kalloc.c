@@ -36,12 +36,6 @@ kinit()
   for(;i < NCPU; i++){
     initlock(&kmems[i].lock, "kmem");
   }
-  //uint64 len = (PHYSTOP - (uint64)end) / NCPU;
-
-  // for(i = 0; i< 3; i++){
-  //     freerange((void *)((uint64)end + len * i), (void*)((uint64)end + len * (i + 1)));
-  // }
-  // initlock(&kmem.lock, "kmem");
    freerange(end, (void*)PHYSTOP);
 }
 
@@ -63,9 +57,6 @@ kfree(void *pa)
 {
   struct run *r;
 
-  push_off();
-  int id = cpuid();
-  pop_off();
 
   if(((uint64)pa % PGSIZE) != 0 || (char*)pa < end || (uint64)pa >= PHYSTOP)
     panic("kfree");
@@ -74,6 +65,12 @@ kfree(void *pa)
   memset(pa, 1, PGSIZE);
 
   r = (struct run*)pa;
+
+  int id;
+
+  push_off();
+  id = cpuid();
+  pop_off();
 
   acquire(&kmems[id].lock);
   r->next = kmems[id].freelist;
@@ -92,12 +89,38 @@ kalloc()
   push_off();
   int id = cpuid();
   pop_off();
-
+  
   acquire(&kmems[id].lock);
   r = kmems[id].freelist;
+  //代表找到了可用的freelist
   if(r)
     kmems[id].freelist = r->next;
   release(&kmems[id].lock);
+  
+  //窃取,当前无可用的freelist
+
+  if(!r){
+    for(int j = 0; j < NCPU ; j++){
+      //相等cpu跳过
+      int i = (j + id) % NCPU;
+      if(i == id){
+        
+      }
+      else{
+        acquire(&kmems[i].lock);
+        r = kmems[i].freelist;
+        //获取
+        if(r){
+          kmems[i].freelist = r->next;
+        }
+        release(&kmems[i].lock);
+        //获取完成跳出
+        if(r)break;
+      }
+
+      
+    }
+  }
 
   if(r)
     memset((char*)r, 5, PGSIZE); // fill with junk
