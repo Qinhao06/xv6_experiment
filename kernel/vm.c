@@ -57,7 +57,7 @@ kvminit()
  * create a kernel page table for the process.
  */
 
-
+//映射内核页表
 void
 kpgtblmap(pagetable_t pagetable,uint64 va, uint64 pa, uint64 sz, int perm)
 {
@@ -65,7 +65,7 @@ kpgtblmap(pagetable_t pagetable,uint64 va, uint64 pa, uint64 sz, int perm)
     panic("create kernel map");
 }
 
-
+//创建内核页表并且初始化
 pagetable_t kpgtblinit(){
 
   pagetable_t pagetable = (pagetable_t)kalloc();
@@ -507,6 +507,7 @@ test_pagetable()
   return satp != gsatp;
 }
 
+//输出表项和实际地址
 void vmprint(pagetable_t pgtbl, int depth){
     if(depth == 0){
       printf("page table %p\n", pgtbl);
